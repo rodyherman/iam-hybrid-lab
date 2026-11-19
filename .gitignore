@@ -1,0 +1,14 @@
+﻿# Secrets et donnees sensibles
+*.pfx
+*.key
+*.env
+*.secret
+secrets/
+motsdepasse*
+# Fichiers lourds du labo
+*.iso
+*.vhdx
+*.avhdx
+# Fichiers systeme
+Thumbs.db
+desktop.ini
