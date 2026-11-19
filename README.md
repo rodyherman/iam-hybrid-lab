@@ -1,7 +1,11 @@
-﻿# Labo IAM hybride — Active Directory + Microsoft Entra ID + Intune
+# Labo IAM hybride — Active Directory + Microsoft Entra ID + Intune
 
 Sécurisation des identités de **RODy**, une entreprise fictive de 100 collaborateurs,
 dans un labo hybride construit de zéro.
+
+![Architecture du labo](diagrams/architecture.png)
+
+➡️ Architecture détaillée (infrastructure, structure AD, modèle AGDLP) : [docs/00-architecture.md](docs/00-architecture.md)
 
 ## Objectif
 Démontrer les compétences d'un administrateur IAM : gestion des identités on-premise,
@@ -35,7 +39,8 @@ Hyper-V • Windows Server 2022 • Windows 11 Entreprise • tenant Microsoft E
 
 ## Contenu du dépôt
 - `scripts/ad/` : scripts PowerShell de création des comptes
-- `docs/` : documentation et rapports de GPO
+- `docs/` : documentation, architecture et rapports de GPO
+- `diagrams/` : schémas d'architecture
 - `screenshots/` : captures par phase
 - `journal.md` : journal de bord
 
