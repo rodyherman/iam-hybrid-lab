@@ -9,12 +9,12 @@ la structure de l'annuaire Active Directory et le modèle de groupes AGDLP.
 
 ```mermaid
 flowchart TB
-  subgraph HOST["PC hôte — Hyper-V (32 Go RAM, SSD)"]
+  subgraph HOST["PC hôte — Hyper-V (16 Go RAM, SSD NVMe, mémoire dynamique)"]
     subgraph NET["Réseau LAB-NAT 192.168.50.0/24 — passerelle et NAT : 192.168.50.1"]
       direction LR
       CLIENT01["<b>CLIENT01</b> — DHCP<br/>Windows 11 Entreprise<br/>Joint à l'AD"]
       DC01["<b>DC01</b> — 192.168.50.10<br/>Windows Server 2022<br/>AD DS • DNS • DHCP<br/>ad.rodylabo.be"]
-      SYNC01["<b>SYNC01</b> — 192.168.50.20<br/>Windows Server 2022<br/>Agent Entra Cloud Sync"]
+      SYNC01["<b>SYNC01</b> — 192.168.50.20<br/>Windows Server 2022<br/>Membre du domaine<br/>Agent Cloud Sync en phase 4"]
       CLIENT02["<b>CLIENT02</b> — DHCP<br/>Windows 11 Entreprise<br/>Joint à Entra ID"]
       CLIENT01 -- "Kerberos • GPO" --> DC01
       SYNC01 -- "lecture LDAP" --> DC01
@@ -36,8 +36,8 @@ flowchart TB
   classDef done fill:#14284B,stroke:#14284B,color:#ffffff
   classDef todo fill:#ffffff,stroke:#8a94a6,color:#14284B,stroke-dasharray: 5 4
   classDef cloud fill:#ffffff,stroke:#0E6E5C,color:#0E6E5C,stroke-dasharray: 5 4
-  class DC01 done
-  class SYNC01,CLIENT01,CLIENT02 todo
+  class DC01,SYNC01,CLIENT01 done
+  class CLIENT02 todo
   class ENTRA,INTUNE,APPS,DNSPUB cloud
   style HOST fill:#F7F9FC,stroke:#9AA8BC
   style NET fill:#EEF3FA,stroke:#1F5FAD
@@ -47,9 +47,11 @@ flowchart TB
 | Machine | Système | Adresse | Rôle |
 |---|---|---|---|
 | **DC01** | Windows Server 2022 | 192.168.50.10 (fixe) | Contrôleur de domaine `ad.rodylabo.be` : AD DS, DNS, DHCP |
-| **SYNC01** | Windows Server 2022 | 192.168.50.20 (fixe) | Agent Microsoft Entra Cloud Sync (synchronisation AD → Entra ID) |
-| **CLIENT01** | Windows 11 Entreprise | DHCP (.100 à .150) | Poste joint à l'AD, géré par GPO |
+| **SYNC01** | Windows Server 2022 | 192.168.50.20 (fixe) | Serveur membre (OU Serveurs) — accueillera l'agent Microsoft Entra Cloud Sync |
+| **CLIENT01** | Windows 11 Entreprise | DHCP (192.168.50.100) | Poste joint à l'AD (OU Ordinateurs), géré par GPO |
 | **CLIENT02** | Windows 11 Entreprise | DHCP (.100 à .150) | Poste joint à Entra ID, géré par Intune |
+
+**Hôte** : portable 16 Go de RAM, SSD NVMe. Les VM utilisent la **mémoire dynamique** Hyper-V et ne sont démarrées que lorsqu'elles sont nécessaires.
 
 **Réseau** : commutateur Hyper-V interne `LAB-NAT` avec NAT sur l'hôte. Les VM sont isolées du réseau
 domestique mais accèdent à Internet (indispensable pour joindre Microsoft Entra ID).

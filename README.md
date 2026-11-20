@@ -33,15 +33,18 @@ synchronisation vers le cloud, authentification forte, Zero Trust, privilèges e
 - Stratégie de mots de passe (12 caractères) et **PSO** renforcée pour les admins (16 caractères)
 - GPO de sécurité : LLMNR désactivé, verrouillage de session, pare-feu forcé, audit avancé
 - Serveur DHCP autorisé dans l'AD
+- CLIENT01 (Windows 11) et SYNC01 (Windows Server) joints au domaine, GPO vérifiée sur le poste
+- Labo dimensionné pour 16 Go de RAM grâce à la mémoire dynamique Hyper-V
 
 ## Environnement
-Hyper-V • Windows Server 2022 • Windows 11 Entreprise • tenant Microsoft Entra ID
+Hyper-V (portable 16 Go de RAM) • Windows Server 2022 • Windows 11 Entreprise • tenant Microsoft Entra ID
 
 ## Contenu du dépôt
 - `scripts/ad/` : scripts PowerShell de création des comptes
 - `docs/` : documentation, architecture et rapports de GPO
 - `diagrams/` : schémas d'architecture
 - `screenshots/` : captures par phase
+- `docs/depannage.md` : **17 problèmes réels rencontrés et résolus**
 - `journal.md` : journal de bord
 
 ## Auteur
