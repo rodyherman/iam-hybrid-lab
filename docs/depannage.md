@@ -155,7 +155,7 @@ Relancer `dcdiag` après 24 heures.
 ## 6. Le nombre de membres d'un groupe s'affiche `{}`
 
 **Phase** : 2 — vérification des groupes AGDLP
-**Capture** : [`02-11-groupes-agdlp.png`](../screenshots/phase-02/02-11-groupes-agdlp.png) (version corrigée)
+**Capture** : [`02-10-groupes-agdlp.png`](../screenshots/phase-02/02-10-groupes-agdlp.png) (version corrigée)
 
 **Symptôme** — Les groupes globaux affichent leur nombre de membres, mais les groupes `DL_Partage_*` affichent `{}`.
 
@@ -214,14 +214,14 @@ $env:Path = [Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [Env
 
 **Phase** : 2 — publication sur GitHub
 
-**Symptôme** — Risque détecté avant le premier push : `02-13-strategie-mdp-domaine.png` aurait été ignorée.
+**Symptôme** — Risque détecté avant le premier push : `02-12-strategie-mdp-domaine.png` aurait été ignorée.
 
 **Cause** — La règle `*mdp*` du `.gitignore`, prévue pour bloquer des fichiers de mots de passe,
 excluait **tout fichier dont le nom contient « mdp »**.
 
 **Solution** — Remplacer la règle par des motifs précis (`*.secret`, `secrets/`, `motsdepasse*`), puis vérifier :
 ```powershell
-git check-ignore -v screenshots\phase-02\02-13-strategie-mdp-domaine.png
+git check-ignore -v screenshots\phase-02\02-12-strategie-mdp-domaine.png
 ```
 (aucun résultat = le fichier n'est pas ignoré)
 
