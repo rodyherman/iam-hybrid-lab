@@ -16,8 +16,8 @@ synchronisation vers le cloud, authentification forte, Zero Trust, privilèges e
 |---|---|---|
 | 01 | Réseau Hyper-V (NAT) et création des VM | ✅ |
 | 02 | Contrôleur de domaine, OU, 100 comptes, groupes AGDLP, mots de passe, GPO, DHCP | ✅ |
-| 03 | Jonction des postes, tiering, LAPS | 🚧 |
-| 04 | Synchronisation vers Entra ID (Cloud Sync) | ⏳ |
+| 03 | Jonction des postes, mises à jour, LAPS, tiering | ✅ |
+| 04 | Synchronisation vers Entra ID (Cloud Sync) | ✅ |
 | 05 | MFA et accès conditionnel | ⏳ |
 | 06 | SSO : SAML et OpenID Connect | ⏳ |
 | 07 | Intune et postes conformes | ⏳ |
@@ -35,16 +35,23 @@ synchronisation vers le cloud, authentification forte, Zero Trust, privilèges e
 - Serveur DHCP autorisé dans l'AD
 - CLIENT01 (Windows 11) et SYNC01 (Windows Server) joints au domaine, GPO vérifiée sur le poste
 - Labo dimensionné pour 16 Go de RAM grâce à la mémoire dynamique Hyper-V
+- Serveurs mis à jour (Windows Server 2022 build 20348.5622) avant mise en service
+- **Windows LAPS** : mot de passe administrateur local unique par poste, 15 caractères, rotation 30 jours, chiffré dans l'AD
+- **Modèle de tiering** : comptes `adm-t0/t1/t2` séparés, Tier 2 administrateur des postes, Tier 0 et Domain Admins interdits de connexion sur les postes (GPO)
+- Domaine `rodylabo.be` vérifié dans Entra ID et compte de synchronisation à moindre privilège, créés avec **Microsoft Graph PowerShell**
+- **Entra Cloud Sync** sur SYNC01 (compte de service gMSA), hachage des mots de passe, protection contre les suppressions accidentelles
+- Résultat vérifié par Graph : **100 utilisateurs et 10 groupes synchronisés, 0 compte d'administration dans le cloud**
 
 ## Environnement
 Hyper-V (portable 16 Go de RAM) • Windows Server 2022 • Windows 11 Entreprise • tenant Microsoft Entra ID
 
 ## Contenu du dépôt
 - `scripts/ad/` : scripts PowerShell de création des comptes
+- `scripts/graph/` : scripts Microsoft Graph PowerShell (domaine, compte de synchronisation)
 - `docs/` : documentation, architecture et rapports de GPO
 - `diagrams/` : schémas d'architecture
 - `screenshots/` : captures par phase
-- `docs/depannage.md` : **17 problèmes réels rencontrés et résolus**
+- `docs/depannage.md` : **32 problèmes réels rencontrés et résolus**
 - `journal.md` : journal de bord
 
 ## Auteur
