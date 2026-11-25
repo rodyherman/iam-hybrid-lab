@@ -148,3 +148,32 @@ Les problèmes sont détaillés dans [docs/depannage.md](docs/depannage.md).
 **Prochaine étape**
 - Phase 5 : essai Entra ID P2, comptes d'urgence, méthodes d'authentification résistantes au phishing, remplacement des Security Defaults par l'accès conditionnel.
 
+---
+
+## Mercredi 25 novembre 2026 — Phase 5 : MFA et accès conditionnel
+
+**Réalisé**
+- Vérification des captures de la phase 4 (IP publique, e-mail et ID de tenant masqués) et mise à jour de la documentation.
+- Essai **Entra ID P2** activé (25 licences jusqu'au 24 décembre), renouvellement réglé sur « Annuler à l'expiration ».
+- Groupe cloud **GRP_Pilote_EntraP2** (mon compte + 24 employés, dont les 5 responsables) et licence attribuée par groupe : 25 / 25 consommées.
+- Comptes d'urgence **bg-admin01** et **bg-admin02** : cloud uniquement, Global Administrator permanent, mot de passe de 32 caractères conservé hors ligne, groupe d'exclusion `GRP_Exclusion_CA_BreakGlass` protégé par `IsAssignableToRole`.
+- Méthodes d'authentification : Authenticator avec application et lieu affichés, passkeys activées, SMS et appel vocal désactivés.
+- Passkeys dans Microsoft Authenticator pour les deux comptes d'urgence et mon compte administrateur.
+- Quatre stratégies d'accès conditionnel créées en Graph : MFA pour tous, blocage de l'authentification héritée, MFA résistante au phishing pour les rôles admin, blocage hors Belgique.
+- Simulation (*Report-only*) lue dans les journaux avec `Get-MgAuditLogSignIn`, puis Security Defaults désactivés et stratégies activées une par une.
+- Tests : Arthur obligé d'enregistrer Authenticator (CA001). Mon compte admin refusé avec Authenticator seul, accepté avec la passkey (CA003).
+
+**Problèmes rencontrés**
+- Formulaire d'achat ambigu : 100 licences et 1 263 € affichés, alors que l'essai donne 25 licences.
+- Erreurs de manipulation dans VS Code : bloc de script abîmé, `$` oublié dans une sélection, collage en fin de ligne.
+- Tableau masqué par l'affichage automatique de PowerShell, journal de connexion pas encore disponible.
+
+**Appris**
+- Une MFA « classique » n'est pas résistante au phishing : un relais en temps réel peut la contourner, pas une passkey liée au domaine.
+- Les comptes d'urgence se préparent **avant** la première stratégie, et se testent.
+- Le mode *Report-only* permet de mesurer l'impact d'une stratégie avant de bloquer qui que ce soit.
+- La licence par groupe applique le cycle Joiner / Mover / Leaver aux licences.
+
+**Prochaine étape**
+- Phase 6 : SSO (SAML et OpenID Connect) avec une application d'entreprise.
+

@@ -39,6 +39,13 @@ avec le message d'erreur, la cause identifiée, la solution appliquée et la le�
 | 30 | 4 | `Unable to find domain controller` | Identifiants cloud (admin-sync) repris par l'assistant | Saisir un compte du domaine |
 | 31 | 4 | `Get-MgGroup` non reconnue | Module `Microsoft.Graph.Groups` non installé | Le SDK Graph est découpé en modules |
 | 32 | 4 | Test à la demande : compte admin « in scope » | Le test importe l'objet par son DN | Vérifier un contrôle sur le résultat réel |
+| 33 | 5 | Formulaire d'essai P2 : 100 licences et 1 263 € affichés | Le panneau règle l'abonnement payant après l'essai (l'essai donne 25 licences) | Lire ce que règle chaque champ, puis « Annuler à l'expiration » |
+| 34 | 5 | La page publique d'essai propose de créer un compte | Risque de créer un second tenant | Se connecter avec le compte admin existant |
+| 35 | 5 | Bloc de script abîmé dans VS Code | Ligne déplacée et commentée par erreur | `Revert File`, puis relancer |
+| 36 | 5 | `domaine : Le terme n'est pas reconnu` | Sélection commencée après le `$` | Sélectionner depuis le début de la ligne |
+| 37 | 5 | `Out-NullConnect-MgGraph` non reconnu, invite `>>` | Collage en fin de ligne, accolade manquante | Coller sur une invite vide |
+| 38 | 5 | Un tableau attendu n'apparaît pas | Objets de types différents dans la même sortie | `Format-Table` explicite |
+| 39 | 5 | Journal de connexion de l'admin vide | Délai d'ingestion des journaux | Attendre, filtrer avec `startswith` |
 
 ---
 
@@ -661,3 +668,92 @@ Get-MgUser -All -Filter "startswith(userPrincipalName,'adm-')" -ConsistencyLevel
 ```
 
 **Leçon** — Un outil de test ne reproduit pas toujours le comportement réel. Un contrôle de sécurité se prouve sur le résultat final : 100 utilisateurs et 10 groupes synchronisés, **0 compte d'administration** dans le cloud.
+
+---
+
+## 33. Formulaire d'essai Entra ID P2 : 100 licences et 1 263 € affichés
+
+**Phase** : 5 — activation de l'essai P2
+**Capture** : [`05-02-renouvellement-desactive.png`](../screenshots/phase-05/05-02-renouvellement-desactive.png)
+
+**Symptôme** — Le centre d'administration affichait 100 licences, une durée d'un an et un total de 1 263 € TTC « à payer le 25 décembre ». Le mot « essai » n'apparaissait pas dans la partie visible du panneau.
+
+**Cause** — Le panneau *Paramètres de renouvellement de la version d'évaluation* règle uniquement l'**abonnement payant qui suit l'essai**. L'essai lui-même est gratuit et limité à **25 licences** (confirmé par `Get-MgSubscribedSku`).
+
+**Solution** — Durée réglée sur 1 mois, quantité au renouvellement ramenée à 1, puis **Renouveler ou annuler → Annuler à l'expiration**. Microsoft confirme : *« Votre abonnement expire le 24 décembre 2026. Vous pouvez continuer à l'utiliser jusque-là. »*
+
+**Leçon** — Ne jamais valider un écran de facturation sans savoir ce que règle chaque champ. « Annuler à l'expiration » garde l'essai complet, alors qu'« Annuler » l'arrête immédiatement.
+
+---
+
+## 34. La page publique d'essai propose de créer un compte
+
+**Phase** : 5
+
+**Risque** — Après la saisie de l'adresse, la page proposait *Se connecter* ou *Créer un nouveau compte à la place*. Créer un compte aurait rattaché l'essai à un **nouveau tenant**, sans les 100 utilisateurs synchronisés.
+
+**Solution** — *Se connecter* avec le compte administrateur de `rody.onmicrosoft.com`. Microsoft redirige alors vers le centre d'administration Microsoft 365, où l'achat est rattaché au bon tenant.
+
+**Leçon** — Pour un tenant existant, passer directement par le centre d'administration (*Facturation → Acheter des services*).
+
+---
+
+## 35. Bloc de script abîmé dans VS Code
+
+**Phase** : 5 — `New-PiloteP2.ps1`
+
+**Symptôme** — La ligne `$domaine = "rodylabo.be"` se trouvait commentée au milieu de la liste, et `# RH (5)` avait perdu son `#`.
+
+**Cause** — Modification accidentelle dans l'éditeur (raccourci de commentaire, glisser-déposer).
+
+**Solution** — `Ctrl + Maj + P` → `Revert File` pour recharger la version enregistrée.
+
+**Leçon** — Relire un bloc avant de l'exécuter. Git permet aussi de retrouver la dernière version validée (`git diff`, `git checkout -- fichier`).
+
+---
+
+## 36. « Le terme « domaine » n'est pas reconnu »
+
+**Phase** : 5
+
+**Cause** — La sélection commençait juste après le `$`. PowerShell a reçu `domaine = "rodylabo.be"` et a cherché une commande nommée `domaine`.
+
+**Solution** — Placer le curseur en début de ligne (touche *Origine*) avant de sélectionner. Contrôler le résultat : `$membres | Select-Object -First 3`.
+
+---
+
+## 37. `Out-NullConnect-MgGraph` non reconnu, invite `>>`
+
+**Phase** : 5
+
+**Cause** — La commande a été collée à la fin de la ligne précédente (`Disconnect-MgGraph | Out-Null`), sans retour à la ligne. Dans le même collage, l'accolade fermante de la fonction manquait : PowerShell attendait la suite (`>>`).
+
+**Solution** — Taper `}` puis Entrée (ou `Ctrl + C`), puis lancer `Connect-MgGraph` seul sur sa ligne.
+
+**Leçon** — Toujours coller sur une invite vide. L'invite `>>` signifie que PowerShell attend la fin d'un bloc.
+
+---
+
+## 38. Un tableau attendu n'apparaît pas
+
+**Phase** : 5 — vérification des licences
+
+**Cause** — Quand une même sortie contient des objets de types différents, PowerShell met en forme le premier et peut ignorer les colonnes des suivants. La ligne *Total / ConsumedUnits* n'était pas affichée.
+
+**Solution** — Forcer l'affichage avec `Format-Table` sur chaque commande de vérification.
+
+---
+
+## 39. Journal de connexion de l'administrateur vide
+
+**Phase** : 5 — lecture de la simulation (*Report-only*)
+
+**Cause** — Les journaux de connexion arrivent avec plusieurs minutes de retard, et la connexion de test n'avait pas encore été enregistrée.
+
+**Solution** — Attendre 5 minutes, puis :
+```powershell
+$s = Get-MgAuditLogSignIn -Filter "startswith(userPrincipalName,'tchambia')" -Top 1
+$s.AppliedConditionalAccessPolicies | Format-Table DisplayName, Result
+```
+Résultat : CA001 et CA003 en `reportOnlySuccess` grâce à la passkey.
+

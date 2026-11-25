@@ -18,7 +18,7 @@ synchronisation vers le cloud, authentification forte, Zero Trust, privilèges e
 | 02 | Contrôleur de domaine, OU, 100 comptes, groupes AGDLP, mots de passe, GPO, DHCP | ✅ |
 | 03 | Jonction des postes, mises à jour, LAPS, tiering | ✅ |
 | 04 | Synchronisation vers Entra ID (Cloud Sync) | ✅ |
-| 05 | MFA et accès conditionnel | ⏳ |
+| 05 | MFA et accès conditionnel | ✅ |
 | 06 | SSO : SAML et OpenID Connect | ⏳ |
 | 07 | Intune et postes conformes | ⏳ |
 | 08 | PIM et revues d'accès | ⏳ |
@@ -41,17 +41,21 @@ synchronisation vers le cloud, authentification forte, Zero Trust, privilèges e
 - Domaine `rodylabo.be` vérifié dans Entra ID et compte de synchronisation à moindre privilège, créés avec **Microsoft Graph PowerShell**
 - **Entra Cloud Sync** sur SYNC01 (compte de service gMSA), hachage des mots de passe, protection contre les suppressions accidentelles
 - Résultat vérifié par Graph : **100 utilisateurs et 10 groupes synchronisés, 0 compte d'administration dans le cloud**
+- Licences Entra ID P2 attribuées **par groupe** à un pilote de 25 utilisateurs
+- **Deux comptes d'urgence** (break-glass) exclus de l'accès conditionnel, protégés par passkey
+- Méthodes d'authentification : Authenticator avec contexte affiché, **passkeys**, SMS et appel vocal désactivés
+- **Accès conditionnel** (simulé puis activé) : MFA pour tous, authentification héritée bloquée, **MFA résistante au phishing pour les administrateurs**, connexions hors Belgique bloquées
 
 ## Environnement
 Hyper-V (portable 16 Go de RAM) • Windows Server 2022 • Windows 11 Entreprise • tenant Microsoft Entra ID
 
 ## Contenu du dépôt
 - `scripts/ad/` : scripts PowerShell de création des comptes
-- `scripts/graph/` : scripts Microsoft Graph PowerShell (domaine, compte de synchronisation)
+- `scripts/graph/` : scripts Microsoft Graph PowerShell (domaine, synchronisation, licences, comptes d'urgence, méthodes d'authentification, accès conditionnel)
 - `docs/` : documentation, architecture et rapports de GPO
 - `diagrams/` : schémas d'architecture
 - `screenshots/` : captures par phase
-- `docs/depannage.md` : **32 problèmes réels rencontrés et résolus**
+- `docs/depannage.md` : **39 problèmes réels rencontrés et résolus**
 - `journal.md` : journal de bord
 
 ## Auteur
